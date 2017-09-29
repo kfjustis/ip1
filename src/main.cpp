@@ -1,8 +1,10 @@
-#include <iostream>
-#include <stdio.h>
+//#include <iostream>
+//#include <stdio.h>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+
+#include "histogram.h"
 
 int main(int argc, char** argv) {
 
@@ -27,41 +29,45 @@ int main(int argc, char** argv) {
 	bool uniform = true;
 	bool accumulate = false;
 
-	// histogram data matrix
+	// generate histogram
 	cv::Mat src_histogram;
 
-	// calculate the histogram data
-	cv::calcHist(&src_image, 1, 0, cv::Mat(), src_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
-
-	// draw the histogram
-	int histogram_width = 512;
-	int histogram_height = 400;
-	int bin_width = cvRound((double)histogram_width/num_bins);
-
-	// create histogram image
-	cv::Mat histogram_image(histogram_height, histogram_width, CV_8UC1, cv::Scalar(0,0,0));
-
-	// normalize values to [0, histogram_image.rows]
-	cv::normalize(src_histogram, src_histogram, 0, histogram_image.rows, cv::NORM_MINMAX, -1, cv::Mat());
-
-	// use rectangles to show histogram
-	for (int i = 1; i < num_bins; ++i) {
-		cv::rectangle(histogram_image, cv::Point(bin_width*(i), histogram_height),
-									   cv::Point(bin_width*(i), histogram_height - cvRound(src_histogram.at<float>(i))),
-									   cv::Scalar(255, 0, 0), 1, cv::LINE_8, 0);
-	}
-
-	// do the contrast stretch on the source image
-	
+	cv::Mat src_image_hist = Kynan::GenerateSimpleHistogram(num_bins, &src_image, 1, 0,
+							 src_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
 	// show source image
-	cv::namedWindow("Source image", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Source image", src_image);
+	cv::namedWindow("Source image before full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source image before full-scale contrast stretch", src_image);
 
 	// show histogram
-	cv::namedWindow("Source histogram", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Source histogram", histogram_image);
+	cv::namedWindow("Source histogram before full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source histogram before full-scale contrast stretch", src_image_hist);
 
+	// do the contrast stretch on the source image
+	// determine rmin and rmax
+	double rmin, rmax;
+	cv::minMaxLoc(src_image, &rmin, &rmax);
+
+	std::cout << "The min intensity is: " << rmin << std::endl;
+	std::cout << "The max intensity is: " << rmax << std::endl;
+
+	/* Source:
+	 * https://stackoverflow.com/questions/11977954/opencv-matrix-iteration
+	 */
+	for (int row = 0; row < src_image.rows; ++row) {
+		uchar* p = src_image.ptr(row);
+		for (int col = 0; col < src_image.cols; ++col) {
+			//Kynan::CalcSValue(src_image.data[0], rmin, rmax, 8);
+			//std::cout << ((*p) - '0') << std::endl;
+			//*p++
+			*p = Kynan::CalcSValue((double)(*p), rmin, rmax, 8);
+			p++;
+		}
+	}
+
+	// show processed image
+	cv::namedWindow("Source image after full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source image after full-scale contrast stretch", src_image);
 
 	cv::waitKey(0);
 
