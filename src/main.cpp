@@ -45,10 +45,17 @@ int main(int argc, char** argv) {
 	cv::normalize(src_histogram, src_histogram, 0, histogram_image.rows, cv::NORM_MINMAX, -1, cv::Mat());
 
 	// draw line on histogram_image
-	for (int i = 1; i < num_bins; ++i) {
+	/*for (int i = 1; i < num_bins; ++i) {
 		cv::line(histogram_image, cv::Point(bin_width*(i-1), histogram_height - cvRound(src_histogram.at<float>(i-1))),
 								  cv::Point(bin_width*(i), histogram_height - cvRound(src_histogram.at<float>(i))),
 								  cv::Scalar(255, 0, 0), 1, cv::LINE_8, 0);
+	}*/
+
+	// use rectangles to show histogram
+	for (int i = 1; i < num_bins; ++i) {
+		cv::rectangle(histogram_image, cv::Point(bin_width*(i), histogram_height),
+									   cv::Point(bin_width*(i), histogram_height - cvRound(src_histogram.at<float>(i))),
+									   cv::Scalar(255, 0, 0), 1, cv::LINE_8, 0);
 	}
 
 	// show source image
