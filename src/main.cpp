@@ -11,14 +11,55 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	// load image
-	cv::Mat img;
-	// 0 flag for grayscale image
-	img = cv::imread(argv[1],0);
+	// load source image, 0 flag for grayscale
+	cv::Mat src_image;
+	src_image = cv::imread(argv[1],0);
 
-	// show image
-	cv::namedWindow("Source image", CV_WINDOW_NORMAL);
-	cv::imshow("Source image", img);
+	// graph source image histogram
+	// number of bins
+	int num_bins = 256;
+
+	// intensity ranges
+	float i_range[] = {0, 256};
+	const float* histogram_range = {i_range};
+
+	// histogram settings
+	bool uniform = true;
+	bool accumulate = false;
+
+	// histogram data matrix
+	cv::Mat src_histogram;
+
+	// calculate the histogram data
+	cv::calcHist(&src_image, 1, 0, cv::Mat(), src_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
+
+	// draw the histogram
+	int histogram_width = 512;
+	int histogram_height = 400;
+	int bin_width = cvRound((double)histogram_width/num_bins);
+
+	// create histogram image
+	cv::Mat histogram_image(histogram_height, histogram_width, CV_8UC1, cv::Scalar(0,0,0));
+
+	// normalize values to [0, histogram_image.rows]
+	cv::normalize(src_histogram, src_histogram, 0, histogram_image.rows, cv::NORM_MINMAX, -1, cv::Mat());
+
+	// draw line on histogram_image
+	for (int i = 1; i < num_bins; ++i) {
+		cv::line(histogram_image, cv::Point(bin_width*(i-1), histogram_height - cvRound(src_histogram.at<float>(i-1))),
+								  cv::Point(bin_width*(i), histogram_height - cvRound(src_histogram.at<float>(i))),
+								  cv::Scalar(255, 0, 0), 1, cv::LINE_8, 0);
+	}
+
+	// show source image
+	cv::namedWindow("Source image", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source image", src_image);
+
+	// show histogram
+	cv::namedWindow("Source histogram", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source histogram", histogram_image);
+
+
 	cv::waitKey(0);
 
 	return 0;
