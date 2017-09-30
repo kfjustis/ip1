@@ -53,7 +53,7 @@ unsigned char CalcSValue(double r, double rmin, double rmax, int bpp) {
 
     // calculate
     s = std::round(((std::pow(2, bpp)) - 1) * ((r - rmin)/(rmax - rmin)));
-    s = s - '0';
+    //s = s - '0';
 
     //std::cout << "Start r: " << r << std::endl;
     //std::cout << "End s  : " << s << std::endl;
