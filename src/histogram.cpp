@@ -44,7 +44,21 @@ uchar CalcSValue(uchar r, uchar rmin, uchar rmax, unsigned int bpp) {
 }
 
 cv::Mat GenerateFSImage(const cv::Mat* src_image) {
-    return cv::Mat();
+    double rmin, rmax;
+	cv::minMaxLoc(*src_image, &rmin, &rmax);
+
+	std::cout << "The min intensity is: " << rmin << std::endl;
+	std::cout << "The max intensity is: " << rmax << std::endl;
+
+	cv::Mat proc_image = src_image->clone();
+
+	 for (int row = 0; row < src_image->rows; ++row) {
+ 		for (int col = 0; col < src_image->cols; ++col) {
+			proc_image.at<uchar>(row, col) = Kynan::CalcSValue(src_image->at<uchar>(row,col), rmin, rmax, 8);
+ 		}
+	}
+
+    return proc_image;
 }
 
 } // namespace

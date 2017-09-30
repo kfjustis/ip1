@@ -43,30 +43,11 @@ int main(int argc, char** argv) {
 	cv::namedWindow("Source image before full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Source image before full-scale contrast stretch", src_image);
 
-	// show histogram
+	// show souce histogram
 	cv::namedWindow("Source histogram before full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Source histogram before full-scale contrast stretch", src_image_hist);
 
-	// TODO make a function!
-	// do the contrast stretch on the source image
-	// determine rmin and rmax
-	double rmin, rmax;
-	cv::minMaxLoc(src_image, &rmin, &rmax);
-
-	std::cout << "The min intensity is: " << rmin << std::endl;
-	std::cout << "The max intensity is: " << rmax << std::endl;
-
-	cv::Mat proc_image = src_image.clone();
-
-	 for (int row = 0; row < src_image.rows; ++row) {
- 		for (int col = 0; col < src_image.cols; ++col) {
- 			//proc_image.at<double>(row,col) = 0;
-			//std::cout << Kynan::CalcSValue(src_image.at<uchar>(row,col), rmin, rmax, 8) << std::endl;
-			//std::cout << src_image.at<uint8_t>(row, col) << std::endl;
-			proc_image.at<uchar>(row, col) = Kynan::CalcSValue(src_image.at<uchar>(row,col), rmin, rmax, 8);
-			//proc_image.at<uchar>(row, col) = 0;
- 		}
-	}
+	cv::Mat proc_image = Kynan::GenerateFSImage(&src_image);
 
 	// generate new histogram
 	cv::Mat proc_histogram;
