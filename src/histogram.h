@@ -24,12 +24,19 @@ cv::Mat generateSimpleHistogramImage(int histogram_width, int histogram_height, 
 
 /*
  * Calculates the new pixel value by way of full-scale contrast stretch.
- * PARAMS: double r      - the original pixel value
- *         double rmin   - the minimum intensity value for the image matrix
- *         double rmax   - the maximum intensity value for the image matrix
- *         int bpp       - the number of bits per pixel to represent the image
- * RETURN: unsigned char - the new value pixel value
+ * PARAMS: uchar r          - the original pixel value
+ *         uchar rmin       - the minimum intensity value for the image matrix
+ *         uchar rmax       - the maximum intensity value for the image matrix
+ *         unsigned int bpp - the number of bits per pixel to represent the image
+ * RETURN: uchar - the new value pixel value
  */
-unsigned char CalcSValue(double r, double rmin, double rmax, int bpp);
+uchar CalcSValue(uchar r, uchar rmin, uchar rmax, unsigned int bpp);
+
+/*
+ * Generates a new image using full-scale contrast stretching from a source image.
+ * PARAMS: src_image - reference to the original source image matrix
+ * RETURN: the new image as type cv::Mat on success, empty matrix on failure
+ */
+cv::Mat GenerateFSImage(const cv::Mat* src_image);
 
 } // namespace

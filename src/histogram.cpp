@@ -30,35 +30,21 @@ cv::Mat GenerateSimpleHistogram(int num_bins, const cv::Mat* src_image, int nima
     return histogram_image;
 }
 
-unsigned char CalcSValue(double r, double rmin, double rmax, int bpp) {
-    // validate parameters
-    if (r < 0 || r > 255) {
-        return '0';
-    }
-
-    if (rmin < 0 || rmin > 255) {
-        return '0';
-    }
-
-    if (rmax < 0 || rmax > 255) {
-        return '0';
-    }
-
-    if (bpp < 0) {
-        return '0';
-    }
-
+uchar CalcSValue(uchar r, uchar rmin, uchar rmax, unsigned int bpp) {
     // convert from char to pixel value
-    unsigned char s = '0';
+    uchar r_pix = r - '0';
+    uchar rmin_pix = rmin - '0';
+    uchar rmax_pix = rmax - '0';
+    uchar s = '0' - '0';
 
-    // calculate
-    s = std::round(((std::pow(2, bpp)) - 1) * ((r - rmin)/(rmax - rmin)));
-    //s = s - '0';
-
-    //std::cout << "Start r: " << r << std::endl;
-    //std::cout << "End s  : " << s << std::endl;
+    // calculate s
+    s = std::round(((std::pow(2, bpp)) - 1) * ((r_pix - rmin_pix)/(rmax_pix - rmin_pix))) + '0';
 
     return s;
+}
+
+cv::Mat GenerateFSImage(const cv::Mat* src_image) {
+    return cv::Mat();
 }
 
 } // namespace
