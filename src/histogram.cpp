@@ -47,8 +47,8 @@ cv::Mat GenerateFSImage(const cv::Mat* src_image) {
     double rmin, rmax;
 	cv::minMaxLoc(*src_image, &rmin, &rmax);
 
-	std::cout << "The min intensity is: " << rmin << std::endl;
-	std::cout << "The max intensity is: " << rmax << std::endl;
+	//std::cout << "The min intensity is: " << rmin << std::endl;
+	//std::cout << "The max intensity is: " << rmax << std::endl;
 
 	cv::Mat proc_image = src_image->clone();
 
@@ -59,6 +59,27 @@ cv::Mat GenerateFSImage(const cv::Mat* src_image) {
 	}
 
     return proc_image;
+}
+
+cv::Mat GenerateTransform(const cv::Mat* src, unsigned int max_intensity, int M, int N) {
+    if (src == NULL) {
+        return cv::Mat();
+    }
+
+    uchar n_sum = 0;
+
+    //std::cout << "Passed histogram: " << std::endl << *src << std::endl;
+
+    cv::Mat trans_image = src->clone();
+    for (int row = 0; row < src->rows; ++row) {
+        for (int col = 0; col < src->cols; ++col) {
+            // grab intensity value
+            n_sum += src->at<uchar>(row,col);
+            trans_image.at<uchar>(row,col) = ((max_intensity-1)/(M*N)) * n_sum;
+        }
+    }
+
+    return trans_image;
 }
 
 } // namespace

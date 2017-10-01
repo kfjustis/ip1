@@ -39,4 +39,16 @@ uchar CalcSValue(uchar r, uchar rmin, uchar rmax, unsigned int bpp);
  */
 cv::Mat GenerateFSImage(const cv::Mat* src_image);
 
+/*
+ * Transforms intensity values from an input image (src) into acceptable new values using
+ * discrete histogram linearization.
+ * PARAMS: src           - reference to the original source matrix
+ *         max_intensity - the largest intensity value in the source matrix
+ *         M             - the height dimension for the source image
+ *         N             - the width dimension for the source image
+ * RETURN: trans_image   - the new image matrix with transformed intensity values,
+                           returns an empty matrix on failure
+ */
+cv::Mat GenerateTransform(const cv::Mat* src, unsigned int max_intensity, int M, int N);
+
 } // namespace

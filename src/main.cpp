@@ -21,45 +21,41 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	// graph source image histogram
-	// number of bins
+	// ------------------------------
+	// source image and its histogram
+	// ------------------------------
 	int num_bins = 256;
 
-	// intensity ranges
 	float i_range[] = {0, 256};
 	const float* histogram_range = {i_range};
 
-	// histogram settings
 	bool uniform = true;
 	bool accumulate = false;
 
-	// generate histogram
 	cv::Mat src_histogram;
-
-	cv::Mat src_image_hist = Kynan::GenerateSimpleHistogram(num_bins, &src_image, 1, 0,
+	cv::Mat src_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &src_image, 1, 0,
 							 src_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
-	// show source image
-	cv::namedWindow("Source image before full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Source image before full-scale contrast stretch", src_image);
-
-	// show souce histogram
-	cv::namedWindow("Source histogram before full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Source histogram before full-scale contrast stretch", src_image_hist);
-
+	// ---------------------------
+	// full-scale contrast stretch
+	// ---------------------------
 	cv::Mat proc_image = Kynan::GenerateFSImage(&src_image);
 
-	// generate new histogram
 	cv::Mat proc_histogram;
-	cv::Mat proc_image_hist = Kynan::GenerateSimpleHistogram(num_bins, &proc_image, 1, 0,
-							 proc_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
+	cv::Mat proc_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &proc_image, 1, 0,
+							  proc_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
-	// show processed image
-	cv::namedWindow("Source image after full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Source image after full-scale contrast stretch", proc_image);
+  	// show source image and histogram
+	cv::namedWindow("Source image", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source image", src_image);
+	cv::namedWindow("Source histogram", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Source histogram", src_hist_image);
 
-	cv::namedWindow("Source histogram after full-scale contrast stretch", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Source histogram after full-scale contrast stretch", proc_image_hist);
+	// show fscs image
+	cv::namedWindow("Full-scale contrast stretch image", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Full-scale contrast stretch image", proc_image);
+	cv::namedWindow("Full-scale contrast stretch histogram", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Full-scale contrast stretch histogram", proc_hist_image);
 
 	cv::waitKey(0);
 
