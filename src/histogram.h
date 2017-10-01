@@ -46,7 +46,7 @@ cv::Mat GenerateFSImage(const cv::Mat* src_image);
  *                                                    brightness is increased when b_scale is > 0
  * RETURN: lin_image - the new matrix containing the output image data on success, empty matrix on failure
  */
-cv::Mat GenerateLinearImage(const cv::Mat* src_image, int c_scale, int b_scale);
+cv::Mat GenerateLinearImage(const cv::Mat* src_image, double c_scale, double b_scale);
 
 /*
  * Transforms intensity values from an input image (src) into acceptable new values using

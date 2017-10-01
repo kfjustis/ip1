@@ -62,22 +62,38 @@ cv::Mat GenerateFSImage(const cv::Mat* src_image) {
     return proc_image;
 }
 
-cv::Mat GenerateLinearImage(const cv::Mat* src_image, int c_scale, int b_scale) {
+cv::Mat GenerateLinearImage(const cv::Mat* src_image, double c_scale, double b_scale) {
     if (src_image == NULL) {
         return cv::Mat();
     }
 
     cv::Mat lin_image = src_image->clone();
     uchar src_val = 0;
-    int val_container = 0;
+    int val_container = 0, new_val = 0;
     for (int row = 0; row < src_image->rows; ++row) {
        for (int col = 0; col < src_image->cols; ++col) {
+           // grab the source value
            src_val = src_image->at<uchar>(row, col);
            val_container = src_val;
-           std::cout << "Src val char: " << src_val << std::endl;
-           std::cout << "Src val num: " << src_val - '0' << std::endl;
+
+           // calculate the new value with clamping
+           new_val = int (val_container * c_scale) + b_scale;
+           if (new_val > 255) {
+               new_val = 255;
+           } else if (new_val < 0) {
+               new_val = 0;
+           }
+           /*std::cout << "Old val: " << val_container << std::endl;
+           std::cout << "New val: " << new_val << std::endl << std::endl;*/
+
+           // drop new value into output image matrix
+           lin_image.at<uchar>(row, col) = (uchar) new_val;
+
+           // Notes:
+           /*std::cout << "Src val char: " << src_val << std::endl;
+           std::cout << "Src val num: " << src_val - '0' << std::endl; // this does not
            std::cout << "Val container: " << val_container << std::endl;
-           //lin_image.at<uchar>(row, col)
+           std::cout << "Val cont as char: " << (uchar) val_container << std::endl; // this works*/
        }
    }
 
