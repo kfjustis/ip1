@@ -45,6 +45,11 @@ int main(int argc, char** argv) {
 	cv::Mat proc_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &proc_image, 1, 0,
 							  proc_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
+	// ---------------------
+	// linear transformation
+	// ---------------------
+	cv::Mat lin_image = Kynan::GenerateLinearImage(&src_image, 50, -10);
+
   	// show source image and histogram
 	cv::namedWindow("Source image", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Source image", src_image);
