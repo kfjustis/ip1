@@ -54,18 +54,23 @@ int main(int argc, char** argv) {
 	cv::Mat lin_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &lin_image, 1, 0,
 							  lin_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
-  	// show source image and histogram
+  	// show source
 	cv::namedWindow("Source image", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Source image", src_image);
 	cv::namedWindow("Source histogram", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Source histogram", src_hist_image);
 
-	// show fscs image
+	cv::waitKey(0);
+
+	// show fscs
 	cv::namedWindow("Full-scale contrast stretch image", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Full-scale contrast stretch image", proc_image);
 	cv::namedWindow("Full-scale contrast stretch histogram", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Full-scale contrast stretch histogram", proc_hist_image);
 
+	cv::waitKey(0);
+
+	// show linear transformation
 	cv::namedWindow("Linear transformation image", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Linear transformation image", lin_image);
 	cv::namedWindow("Linear transformation histogram", CV_WINDOW_AUTOSIZE);
