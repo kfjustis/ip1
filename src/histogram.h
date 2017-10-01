@@ -10,8 +10,8 @@ namespace Kynan {
 /*
  * Generates a basic rectangle histogram for an 8 bit image.
  */
-cv::Mat GenerateSimpleHistogram(int num_bins, const cv::Mat* src_image, int nimages,
-                                const int* channels, cv::Mat hist,
+cv::Mat GenerateHistogramImage(int num_bins, const cv::Mat* src_image, int nimages,
+                                const int* channels, cv::Mat* hist,
                                 int dims, const int* histSize, const float** ranges,
                                 bool uniform=true, bool accumulate=false);
 
@@ -48,16 +48,7 @@ cv::Mat GenerateFSImage(const cv::Mat* src_image);
  */
 cv::Mat GenerateLinearImage(const cv::Mat* src_image, double c_scale, double b_scale);
 
-/*
- * Transforms intensity values from an input image (src) into acceptable new values using
- * discrete histogram linearization.
- * PARAMS: src           - reference to the original source matrix
- *         max_intensity - the largest intensity value in the source matrix
- *         M             - the height dimension for the source image
- *         N             - the width dimension for the source image
- * RETURN: trans_image   - the new image matrix with transformed intensity values,
-                           returns an empty matrix on failure
- */
-cv::Mat GenerateTransform(const cv::Mat* src, unsigned int max_intensity, int M, int N);
+
+cv::Mat GenerateEqualizeImage(const cv::Mat* src_histogram, const cv::Mat* src_image, cv::Mat* eq_histogram, const unsigned int bpp);
 
 } // namespace

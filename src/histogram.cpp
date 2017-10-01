@@ -2,13 +2,13 @@
 
 namespace Kynan {
 
-cv::Mat GenerateSimpleHistogram(int num_bins, const cv::Mat* src_image, int nimages,
-                                const int* channels, cv::Mat hist,
+cv::Mat GenerateHistogramImage(int num_bins, const cv::Mat* src_image, int nimages,
+                                const int* channels, cv::Mat* hist,
                                 int dims, const int* histSize, const float** ranges,
                                 bool uniform, bool accumulate) {
 
     // calculate the histogram data from parameters
-    cv::calcHist(src_image, nimages, channels, cv::Mat(), hist, dims, histSize, ranges,
+    cv::calcHist(src_image, nimages, channels, cv::Mat(), *hist, dims, histSize, ranges,
                  uniform, accumulate);
 
     // generate the histogram image from the data and normalize
@@ -18,12 +18,12 @@ cv::Mat GenerateSimpleHistogram(int num_bins, const cv::Mat* src_image, int nima
 
     cv::Mat histogram_image(histogram_height, histogram_width, CV_8UC1, cv::Scalar(0,0,0));
 
-    cv::normalize(hist, hist, 0, histogram_image.rows, cv::NORM_MINMAX, -1, cv::Mat());
+    cv::normalize(*hist, *hist, 0, histogram_image.rows, cv::NORM_MINMAX, -1, cv::Mat());
 
     // draw with rectangles
 	for (int i = 1; i < num_bins; ++i) {
 		cv::rectangle(histogram_image, cv::Point(bin_width*(i), histogram_height),
-									   cv::Point(bin_width*(i), histogram_height - cvRound(hist.at<float>(i))),
+									   cv::Point(bin_width*(i), histogram_height - cvRound(hist->at<float>(i))),
 									   cv::Scalar(255, 0, 0), 1, cv::LINE_8, 0);
 	}
 
@@ -83,42 +83,69 @@ cv::Mat GenerateLinearImage(const cv::Mat* src_image, double c_scale, double b_s
            } else if (new_val < 0) {
                new_val = 0;
            }
-           /*std::cout << "Old val: " << val_container << std::endl;
-           std::cout << "New val: " << new_val << std::endl << std::endl;*/
 
            // drop new value into output image matrix
            lin_image.at<uchar>(row, col) = (uchar) new_val;
-
-           // Notes:
-           /*std::cout << "Src val char: " << src_val << std::endl;
-           std::cout << "Src val num: " << src_val - '0' << std::endl; // this does not
-           std::cout << "Val container: " << val_container << std::endl;
-           std::cout << "Val cont as char: " << (uchar) val_container << std::endl; // this works*/
        }
    }
 
    return lin_image;
 }
 
-cv::Mat GenerateTransform(const cv::Mat* src, unsigned int max_intensity, int M, int N) {
-    if (src == NULL) {
+cv::Mat GenerateEqualizeImage(const cv::Mat* src_histogram, const cv::Mat* src_image, cv::Mat* eq_histogram, const unsigned int bpp) {
+    if (src_histogram == NULL || src_image == NULL || eq_histogram == NULL) {
+        std::cout << "histogram::GenerateEqualizeImage error - encountered null parameter(s)" << std::endl;
         return cv::Mat();
     }
 
-    uchar n_sum = 0;
+    cv::Size hist_size = src_histogram->size();
+    cv::Size src_size = src_image->size();
 
-    //std::cout << "Passed histogram: " << std::endl << *src << std::endl;
+    double rmin, rmax;
+	cv::minMaxLoc(*src_image, &rmin, &rmax);
 
-    cv::Mat trans_image = src->clone();
-    for (int row = 0; row < src->rows; ++row) {
-        for (int col = 0; col < src->cols; ++col) {
-            // grab intensity value
-            n_sum += src->at<uchar>(row,col);
-            trans_image.at<uchar>(row,col) = ((max_intensity-1)/(M*N)) * n_sum;
-        }
+    if (hist_size.width != 1) {
+        std::cout << "histogram::GenerateEqualizeImage error - invalid histogram dimensions" << std::endl;
+        return cv::Mat();
     }
 
-    return trans_image;
+    // generate H' histogram
+    *eq_histogram = src_histogram->clone();
+    float local_sum = 0, adjusted_intensity = 0;
+    for (int i = 0; i < hist_size.height; ++i) {
+        local_sum = 0;
+        for (int j = 0; j < i; ++j) {
+            local_sum += src_histogram->at<float>(j, 0);
+        }
+        adjusted_intensity = ((local_sum*(src_size.height-1)*bpp/(src_size.height*src_size.width)));
+        if (adjusted_intensity < 0) {
+            adjusted_intensity = (float) 0;
+        } else if (adjusted_intensity > 255) {
+            adjusted_intensity = (float) 255;
+        }
+
+        eq_histogram->at<float>(i, 0) = adjusted_intensity;
+    }
+
+    // use H' as lookup table to generate the equalized image
+    cv::Mat eq_image = src_image->clone();
+    uchar src_char = 0;
+    int src_int = 0, new_int = 0;
+    for (int row = 0; row < src_image->rows; ++row) {
+       for (int col = 0; col < src_image->cols; ++col) {
+           // grab the source value
+           src_char = src_image->at<uchar>(row, col);
+           src_int = src_char;
+
+           // get the new_val from H'
+           new_int = (int) eq_histogram->at<float>(src_int, 0);
+
+           // drop new value into output image matrix
+           eq_image.at<uchar>(row, col) = (uchar) new_int;
+       }
+   }
+
+   return eq_image;
 }
 
 } // namespace

@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
 	bool accumulate = false;
 
 	cv::Mat src_histogram;
-	cv::Mat src_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &src_image, 1, 0,
-							 src_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
+	cv::Mat src_hist_image = Kynan::GenerateHistogramImage(num_bins, &src_image, 1, 0,
+							 &src_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
 	// ---------------------------
 	// full-scale contrast stretch
@@ -42,8 +42,8 @@ int main(int argc, char** argv) {
 	cv::Mat proc_image = Kynan::GenerateFSImage(&src_image);
 
 	cv::Mat proc_histogram;
-	cv::Mat proc_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &proc_image, 1, 0,
-							  proc_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
+	cv::Mat proc_hist_image = Kynan::GenerateHistogramImage(num_bins, &proc_image, 1, 0,
+							  &proc_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
 	// ---------------------
 	// linear transformation
@@ -51,8 +51,16 @@ int main(int argc, char** argv) {
 	cv::Mat lin_image = Kynan::GenerateLinearImage(&src_image, 1.5, -180);
 
 	cv::Mat lin_histogram;
-	cv::Mat lin_hist_image = Kynan::GenerateSimpleHistogram(num_bins, &lin_image, 1, 0,
-							  lin_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
+	cv::Mat lin_hist_image = Kynan::GenerateHistogramImage(num_bins, &lin_image, 1, 0,
+							  &lin_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
+
+	// ----------------------
+	// histogram equalization
+	// ----------------------
+	cv::Mat eq_histogram;
+	cv::Mat eq_image = Kynan::GenerateEqualizeImage(&src_histogram, &src_image, &eq_histogram, 8);
+	cv::Mat eq_hist_image = Kynan::GenerateHistogramImage(num_bins, &eq_image, 1, 0,
+							&eq_histogram, 1, &num_bins, &histogram_range, uniform, accumulate);
 
   	// show source
 	cv::namedWindow("Source image", CV_WINDOW_AUTOSIZE);
@@ -75,6 +83,14 @@ int main(int argc, char** argv) {
 	cv::imshow("Linear transformation image", lin_image);
 	cv::namedWindow("Linear transformation histogram", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Linear transformation histogram", lin_hist_image);
+
+	cv::waitKey(0);
+
+	// show equalized image
+	cv::namedWindow("Equalized image", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Equalized image", eq_image);
+	cv::namedWindow("Equalized image histogram", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Equalized image histogram", eq_hist_image);
 
 	cv::waitKey(0);
 
