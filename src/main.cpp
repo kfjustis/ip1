@@ -10,6 +10,7 @@ int main(int argc, char** argv) {
 
 	if (argc != 2) {
 		std::cout << "Invalid command line args\nUSAGE: " << argv[0] << " <image file>" << std::endl;
+		std::cout << "Recommended: Run from the src folder in build and use command './ip1 ../../res/fig39.tif'" << std::endl;
 		return -1;
 	}
 
@@ -18,10 +19,14 @@ int main(int argc, char** argv) {
 	src_image = cv::imread(argv[1],0);
 	if (src_image.data == NULL) {
 		std::cout << "Failed to load source image" << std::endl;
+		std::cout << "Recommended: Run from the src folder in build and use command './ip1 ../../res/fig39.tif'" << std::endl;
 		return -1;
 	}
 
-	std::cout << "========" << std::endl << "| NOTE | :: The settings for each generated image can be found in output/notes.txt!" << std::endl << "========" << std::endl;
+	std::cout << "\n========" << std::endl << "| NOTE | :: The settings for each generated image can be found in output/notes.txt!" << std::endl << "========" << std::endl;
+	std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
+	std::cout << "Controls: With the source histogram window selected, press any key to load the next image/histogram." << std::endl;
+	std::cout << "          The program ends when all three methods have been loaded. Ctrl-C to abort.\n" << std::endl;
 
 	// ------------------------------
 	// source image and its histogram
