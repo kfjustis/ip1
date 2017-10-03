@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
+	std::cout << "========" << std::endl << "| NOTE | :: The settings for each generated image can be found in output/notes.txt!" << std::endl << "========" << std::endl;
+
 	// ------------------------------
 	// source image and its histogram
 	// ------------------------------
@@ -48,7 +50,7 @@ int main(int argc, char** argv) {
 	// ---------------------
 	// linear transformation
 	// ---------------------
-	cv::Mat lin_image = Kynan::GenerateLinearImage(&src_image, 1.2, 30);
+	cv::Mat lin_image = Kynan::GenerateLinearImage(&src_image, 1.5, -180);
 
 	cv::Mat lin_histogram;
 	cv::Mat lin_hist_image = Kynan::GenerateHistogramImage(num_bins, &lin_image, 1, 0,
