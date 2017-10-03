@@ -117,7 +117,7 @@ cv::Mat GenerateEqualizeImage(const cv::Mat* src_histogram, const cv::Mat* src_i
         for (int j = 0; j < i; ++j) {
             local_sum += src_histogram->at<float>(j, 0);
         }
-        adjusted_intensity = ((local_sum*(src_size.height-1)*bpp/(src_size.height*src_size.width)));
+        adjusted_intensity = ((local_sum*(src_size.height+100)*bpp/(src_size.height*src_size.width)));
         if (adjusted_intensity < 0) {
             adjusted_intensity = (float) 0;
         } else if (adjusted_intensity > 255) {

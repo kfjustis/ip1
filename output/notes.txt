@@ -1,0 +1,15 @@
+Figure 3.8:
+    -linear transformation with contrast scale = 0.8 and brightness scale = 30
+    -histogram equalization with multiplier = src image height * 10 - 1 -> 9759
+
+Figure 3.9:
+    -linear transformation with contrast scale = 1.5 and brightness scale = -180
+    -histogram equalization with multiplier = src image height - 1 -> 768
+
+Figure 3.16.1
+    -linear transformation with contrast scale = 0.8 and brightness scale = -50
+    -histogram equalization with multiplier = src image height * 2 - 1 -> 999
+
+Figure 3.16.2
+    -linear transformation with contrast scale = 1.2 and brightness scale = 30
+    -histogram equalization with multiplier = src image height + 100 -> 600
